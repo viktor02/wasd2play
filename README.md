@@ -1,8 +1,13 @@
 # Wasd2Play
 
+[![time tracker](https://wakatime.com/badge/github/viktor02/wasd2play.svg)](https://wakatime.com/badge/github/viktor02/wasd2play)
+
 ![](img/hello.png)
 
 Open any stream in your favorite player!
+
+### Install
+`pip install wasd2play`
 
 ### Requirements
 `pip install -r requirements.txt`
