@@ -1,5 +1,7 @@
 # Wasd2Play
 
+![](https://wakatime.com/badge/github/viktor02/wasd2play.svg)
+
 ![](https://github.com/viktor02/wasd2play/raw/master/img/hello.png)
 
 Open any stream in your favorite player!
@@ -10,6 +12,7 @@ Open any stream in your favorite player!
 
 #### Manually
 `python setup.py install`
+
 
 ### Requirements
 `pip install -r requirements.txt`
