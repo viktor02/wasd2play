@@ -1,5 +1,10 @@
-import wasd2play.run
+from wasd2play import run
 
 
 def main():
     run.runner()
+
+
+if __name__ == "__main__":
+    main()
+
