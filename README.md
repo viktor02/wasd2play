@@ -17,6 +17,21 @@ Open any stream in your favorite player!
 ### Requirements
 `pip install -r requirements.txt`
 
+### Features
+* Open live wasd.tv streams
+
+  Ex: `wasd.tv/thedrzj -p vlc`
+
+  Desc: Open live stream THEDRZJ in vlc player
+
+* Open  archived streams 
+  Ex: `wasd2play wasd.tv/thedrzj --list`
+  
+  Ex: `wasd2play wasd.tv/thedrzj --select 2`
+  
+  or just `wasd2play wasd.tv/thedrzj --last`
+
+
 ### Help
 ```
 usage: wasd2play [options] url
@@ -29,6 +44,11 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   -p YOUR_PLAYER, --player YOUR_PLAYER
-                        point your player
-  -l, --last            open last stream
+                        Point your player
+  -l, --last            Open last stream
+  -s SELECTED, --select SELECTED
+                        Select stream
+  -ls, --list           Show recent streams
+
+Have a good time!
 ```
