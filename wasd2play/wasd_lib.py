@@ -45,7 +45,7 @@ class WasdLib:
         """ Get tuple of streams """
         json_r = self.get_json_of_stream_by_offset(10, 0)
 
-        list_of_streams = list()
+        list_of_streams = []
         for i in json_r['result']:
             name = i['media_container_name']
             list_of_streams.append(name)
