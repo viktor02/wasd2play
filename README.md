@@ -25,6 +25,7 @@ Open any stream in your favorite player!
   Desc: Open live stream THEDRZJ in vlc player
 
 * Open  archived streams 
+
   Ex: `wasd2play wasd.tv/thedrzj --list`
   
   Ex: `wasd2play wasd.tv/thedrzj --select 2`
