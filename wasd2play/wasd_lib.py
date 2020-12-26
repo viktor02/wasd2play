@@ -19,7 +19,7 @@ class WasdLib:
             'media_container_type': 'SINGLE,COOP',
         }
 
-        api_url = "https://wasd.tv/api/media-containers"
+        api_url = "https://wasd.tv/api/v2/media-containers"
         result_json = requests.get(api_url, params=payload)
         result = json.loads(result_json.content)
         return result
@@ -28,13 +28,20 @@ class WasdLib:
         """ Get playlist m3u8 for current stream """
         stream_json = self.get_json_of_stream_by_offset(1, selected_stream)
 
+        tags = []
+        for tag in stream_json['result'][0]['tags']:
+            tags.append(tag['tag_name'])
+
         result = {
             'stream_name': stream_json['result'][0]['media_container_name'],
             'stream_status': stream_json['result'][0]['media_container_status'],
             'stream_m3u8':
                 stream_json['result'][0]['media_container_streams'][0]['stream_media'][0]['media_meta']['media_url'],
             'archive_stream_m3u8':
-                stream_json['result'][0]['media_container_streams'][0]['stream_media'][0]['media_meta']['media_archive_url']
+                stream_json['result'][0]['media_container_streams'][0]['stream_media'][0]['media_meta'][
+                    'media_archive_url'],
+            'stream_tags':
+                tags
         }
 
         self.stream_name = result['stream_name']

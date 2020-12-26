@@ -23,7 +23,13 @@ def open_player(url, player, selected_stream=0, force_open_last_stream=False):
         print("[wasd2play] Open current stream...")
         print("[wasd2play] {} in your {} player!".format(wasd.stream_name, player))
 
-    subprocess.run([player, stream_url], stdout=subprocess.PIPE, check=True)
+    tags = ", ".join(stream_info['stream_tags'])
+    print("[wasd2play] {}".format(tags))
+
+    try:
+        subprocess.run([player, stream_url], stdout=subprocess.PIPE, check=True)
+    except FileNotFoundError:
+        print("Error: vlc not found. Try use another player with -p flag")
 
 
 def show_streams(url):
