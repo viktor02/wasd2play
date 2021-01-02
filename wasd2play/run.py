@@ -1,5 +1,3 @@
-import sys
-
 from wasd2play.wasd_lib import WasdLib
 import subprocess
 import argparse
@@ -7,43 +5,52 @@ import argparse
 
 def open_player(url, player, selected_stream=0, force_open_last_stream=False):
     """ Open player with stream """
+    try:
+        wasd = WasdLib(url)
 
-    wasd = WasdLib(url)
+        print("[wasd2play] Got a stream playlist...")
+        stream_info = wasd.get_stream(selected_stream)
 
-    print("[wasd2play] Got a stream playlist...")
-    stream_info = wasd.get_stream(selected_stream)
+        # Set to current url
+        stream_url = stream_info['stream_m3u8']
 
-    # Set to current url
-    stream_url = stream_info['stream_m3u8']
+        # If stream offline, open last
+        if stream_info['stream_status'] == "STOPPED" or force_open_last_stream:
+            print("[wasd2play] Open last archived stream...")
+            stream_url = stream_info['archive_stream_m3u8']
+        else:
+            print("[wasd2play] Open current stream...")
 
-    # If stream offline, open last
-    if stream_info['stream_status'] == "STOPPED" or force_open_last_stream:
-        print("[wasd2play] Open last archived stream...")
-        print("[wasd2play] {} in your {} player!".format(wasd.stream_name, player))
-        stream_url = stream_info['archive_stream_m3u8']
-    else:
-        print("[wasd2play] Open current stream...")
-        print("[wasd2play] {} in your {} player!".format(wasd.stream_name, player))
+        print(f"[wasd2play] {wasd.stream_name} in your {player} player!")
 
-    tags = ", ".join(stream_info['stream_tags'])
-    print("[wasd2play] Tags: {}".format(tags))
+        tags = ", ".join(stream_info['stream_tags'])
+        print(f"[wasd2play] Tags: {tags}")
+    except KeyError:
+        print("[wasd2play] Wrong url/streamer nickname. Stopping.")
+        return 0
+    except OSError:
+        print("[wasd2play] OSError. Stopping.")
+        return 0
 
     try:
         subprocess.run([player, stream_url], stdout=subprocess.PIPE, check=True)
     except FileNotFoundError:
-        print("Error: vlc not found. Try use another player with -p flag")
+        print("Error: vlc not found. Try use another player with -p flag. Stopping.")
     except KeyboardInterrupt:
-        sys.exit(0)
+        return 0
 
 
-def show_streams(url):
+def show_streams(url, page=1):
     wasd = WasdLib(url)
 
     print("[wasd2play] Got a streams list...\n")
 
-    streams_list = wasd.get_streams()
+    streams_list = wasd.get_streams(page)
+    count = (page * 10) - 10
     for stream_name in streams_list:
-        print(streams_list.index(stream_name), stream_name)
+        count += 1
+        print(count, stream_name)
+    print(f"Page {page}/3")
 
 
 def runner():
@@ -56,6 +63,8 @@ def runner():
 
     my_parser.add_argument('url',
                            help='stream url')
+
+    # Optional args
     my_parser.add_argument('-p', '--player',
                            help='Point your player',
                            default='vlc',
@@ -72,17 +81,20 @@ def runner():
                            type=int,
                            help='Select stream')
     my_parser.add_argument('-ls', '--list',
-                           action='store_true',
-                           dest="show_list_of_streams",
-                           help='Show recent streams')
+                           action='store',
+                           dest="page",
+                           nargs='?',
+                           const=1,
+                           type=int,
+                           help='Show recent streams page by page')
 
     args = my_parser.parse_args()
 
     welcome_message = "##\n## wasd2play\n##\n"
     print(welcome_message)
 
-    if args.show_list_of_streams:
-        show_streams(args.url)
+    if args.page >= 1:
+        show_streams(args.url, args.page)
         return 0
 
     open_player(args.url, args.your_player, args.selected, args.last_stream)
