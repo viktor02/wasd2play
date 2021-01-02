@@ -1,6 +1,5 @@
 # Wasd2Play
 
-![](https://wakatime.com/badge/github/viktor02/wasd2play.svg)
 
 ![](https://github.com/viktor02/wasd2play/raw/master/img/hello.png)
 
@@ -31,6 +30,12 @@ Open any stream in your favorite player!
   Ex: `wasd2play wasd.tv/thedrzj --select 2`
   
   or just `wasd2play wasd.tv/thedrzj --last`
+  
+* Download stream
+  
+  Ex: `wasd2play thedrzj -d` 
+  
+  Download stream
 
 
 ### Help
@@ -49,7 +54,9 @@ optional arguments:
   -l, --last            Open last stream
   -s SELECTED, --select SELECTED
                         Select stream
-  -ls, --list           Show recent streams
+  -ls [PAGE], --list [PAGE]
+                        Show recent streams page by page
+  -d, --download        Download stream with ffmpeg
 
 Have a good time!
 ```

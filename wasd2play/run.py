@@ -3,7 +3,7 @@ import subprocess
 import argparse
 
 
-def open_player(url, player, selected_stream=0, force_open_last_stream=False):
+def open_player(url, player, selected_stream=0, force_open_last_stream=False, download_stream=False):
     """ Open player with stream """
     try:
         wasd = WasdLib(url)
@@ -33,9 +33,12 @@ def open_player(url, player, selected_stream=0, force_open_last_stream=False):
         return 0
 
     try:
-        subprocess.run([player, stream_url], stdout=subprocess.PIPE, check=True)
+        if download_stream:
+            subprocess.run(f"ffmpeg -i {stream_url} -c copy -bsf:a aac_adtstoasc \"{wasd.stream_name}\".mp4")
+        else:
+            subprocess.run([player, stream_url], stdout=subprocess.PIPE, check=True)
     except FileNotFoundError:
-        print("Error: vlc not found. Try use another player with -p flag. Stopping.")
+        print("[wasd2play] Error: player or ffmpeg not found. Try use another player with -p flag. Stopping.")
     except KeyboardInterrupt:
         return 0
 
@@ -88,13 +91,19 @@ def runner():
                            type=int,
                            help='Show recent streams page by page')
 
+    # Download with ffmpeg
+    my_parser.add_argument('-d', '--download',
+                           action='store_true',
+                           dest='download_stream',
+                           help='Download stream with ffmpeg')
+
     args = my_parser.parse_args()
 
     welcome_message = "##\n## wasd2play\n##\n"
     print(welcome_message)
 
-    if args.page >= 1:
+    if (args.page is not None) and (args.page >= 1):
         show_streams(args.url, args.page)
         return 0
 
-    open_player(args.url, args.your_player, args.selected, args.last_stream)
+    open_player(args.url, args.your_player, args.selected, args.last_stream, args.download_stream)
