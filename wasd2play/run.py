@@ -51,8 +51,8 @@ def show_streams(url, page=1):
     streams_list = wasd.get_streams(page)
     count = (page * 10) - 10
     for stream_name in streams_list:
-        count += 1
         print(count, stream_name)
+        count += 1
     print(f"Page {page}/3")
 
 
