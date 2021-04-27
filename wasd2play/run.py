@@ -3,7 +3,8 @@ import subprocess
 import argparse
 
 
-def open_player(url, player, selected_stream=0, force_open_last_stream=False, download_stream=False):
+def open_player(url, player, selected_stream=0, force_open_last_stream=False,
+                download_stream=False, download_stream_nvenc=False, debug_info=False):
     """ Open player with stream """
     try:
         wasd = WasdLib(url)
@@ -25,6 +26,9 @@ def open_player(url, player, selected_stream=0, force_open_last_stream=False, do
 
         tags = ", ".join(stream_info['stream_tags'])
         print(f"[wasd2play] Tags: {tags}")
+
+        if debug_info:
+            print(f"URL: {stream_url}\n\n{stream_info}")
     except KeyError:
         print("[wasd2play] Wrong url/streamer nickname. Stopping.")
         return 0
@@ -34,7 +38,10 @@ def open_player(url, player, selected_stream=0, force_open_last_stream=False, do
 
     try:
         if download_stream:
-            subprocess.run(f"ffmpeg -i {stream_url} -c copy -bsf:a aac_adtstoasc \"{wasd.stream_name}\".mp4")
+            subprocess.run(f"ffmpeg -i {stream_url} -c:v libx264 -b:v 5M -maxrate 5M -bufsize 8M -c:a copy \"{wasd.stream_name}\".mkv")
+        elif download_stream_nvenc:
+            subprocess.run(
+                f"ffmpeg -hwaccel cuvid -i {stream_url} -c:v hevc_nvenc -b:v 5M -maxrate 7M -bufsize 8M -c:a copy \"{wasd.stream_name}\".mkv")
         else:
             subprocess.run([player, stream_url], stdout=subprocess.PIPE, check=True)
     except FileNotFoundError:
@@ -96,6 +103,14 @@ def runner():
                            action='store_true',
                            dest='download_stream',
                            help='Download stream with ffmpeg')
+    my_parser.add_argument('-dnv', '--download-nvenc',
+                           action='store_true',
+                           dest='download_stream_nvenc',
+                           help='Download stream with ffmpeg using nvenc')
+    my_parser.add_argument('--debug',
+                           action='store_true',
+                           dest='debug_info',
+                           help='Show debug info')
 
     args = my_parser.parse_args()
 
@@ -106,4 +121,5 @@ def runner():
         show_streams(args.url, args.page)
         return 0
 
-    open_player(args.url, args.your_player, args.selected, args.last_stream, args.download_stream)
+    open_player(args.url, args.your_player, args.selected,
+                args.last_stream, args.download_stream, args.download_stream_nvenc, args.debug_info)

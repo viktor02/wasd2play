@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='wasd2play',
-    version='0.4.5',
+    version='0.4.6',
     packages=['wasd2play'],
     classifiers=[
         "Programming Language :: Python :: 3",
